@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+    <context:component-scan base-package="org.sangaizhi.springbatch.cvs"/>
+    <!-- jobLauncher 负责 batch 的启动工作 -->
+    <bean id="jobLauncher" class="org.springframework.batch.core.launch.support.SimpleJobLauncher">
+        <property name="jobRepository" ref="jobRepository"/>
+    </bean>
+    <!-- jobRepository 负责 job 的整个运行过程中的 CRUD 操作-->
+    <bean id="jobRepository" class="org.springframework.batch.core.repository.support.MapJobRepositoryFactoryBean">
+    </bean>
+    <!-- txManager 负责事务管理工作 -->
+    <bean id="txManager" class="org.springframework.batch.support.transaction.ResourcelessTransactionManager"></bean>
+
+</beans>

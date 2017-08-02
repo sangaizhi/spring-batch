@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:batch="http://www.springframework.org/schema/batch"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch.xsd">
+
+    <import resource="spring.xml"/>
+    <batch:job id="cvsJob">
+        <batch:step id="cvsStep">
+            <batch:tasklet transaction-manager="txManager">
+                <!-- 配置CVS文件的读写处理 -->
+                <batch:chunk reader="csvItemReader" writer="csvItemWriter" processor="csvItemProcessor" commit-interval="1" />
+            </batch:tasklet>
+        </batch:step>
+    </batch:job>
+
+
+    <!--
+        定义CVS数据读取的类
+        通过 Spring Batch 提供的 FlatFileItemReader 类，此类主要用于 Flat文件的读操作。
+        1，从resource指定的文件中读取一条记录；
+        2，lineTokenizer将这条记录按照delimiter分解成Fileset，每个字段的名字由names属性取得；
+        3，将分解成的Fileset传递给fieldSetMapper，由其按照名字映射成Pojo对象；
+        4，最终由FlatFileItemReader将映射成的Pojo对象返回，框架将返回的对象传递给Processor。
+    -->
+    <bean id="csvItemReader" class="org.springframework.batch.item.file.FlatFileItemReader">
+        <!-- 指定数据来源的文件位置 -->
+        <property name="resource" value="classpath:input.csv"/>
+        <!-- 将文件映射成一个 pojo -->
+        <property name="lineMapper">
+            <bean class="org.springframework.batch.item.file.mapping.DefaultLineMapper">
+                <!-- 指定行标记，当文件的每一行分解成一个 FieldSet -->
+                <property name="lineTokenizer" ref="lineTokenizer"/>
+                <!-- 将每一行的数据映射成 pojo 对象 -->
+                <property name="fieldSetMapper">
+                    <bean class="org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper">
+                        <!-- 指定映射的目标 pojo 类 -->
+                        <property name="prototypeBeanName" value="student"/>
+                    </bean>
+                </property>
+            </bean>
+        </property>
+    </bean>
+
+    <bean id="student" class="org.sangaizhi.springbatch.cvs.Student"/>
+
+    <bean id="lineTokenizer" class="org.springframework.batch.item.file.transform.DelimitedLineTokenizer">
+        <!-- 指定文件的一行数据按照什么分解，默认为"," -->
+        <property name="delimiter" value=","/>
+        <!-- 分解的每一个字段的名字 -->
+        <property name="names">
+            <list>
+                <value>id</value>
+                <value>name</value>
+                <value>sexStr</value>
+                <value>age</value>
+            </list>
+        </property>
+    </bean>
+
+    <!--
+        定义CVS 数据输出的类
+        1，Processor传递过来一个对象给lineAggregator；
+        2，lineAggregator将其这个对象转化成一个数组；
+        3，再由lineAggregator的属性fieldExtractor将数组转化成按照delimiter分割一个字符串；
+        4，将这个字符串输出。
+    -->
+    <bean id="csvItemWriter" class="org.springframework.batch.item.file.FlatFileItemWriter">
+        <!-- 指定输出目标文件的位置 -->
+        <property name="resource" value="file:out.csv"/>
+        <property name="lineAggregator">
+            <bean class="org.springframework.batch.item.file.transform.DelimitedLineAggregator">
+                <!-- 指定输出的字段以什么分隔 -->
+                <property name="delimiter" value=","/>
+                <!-- 将 pojo 对象组装成由pojo对象的字段组成的一个字符串。 -->
+                <property name="fieldExtractor">
+                    <bean class="org.springframework.batch.item.file.transform.BeanWrapperFieldExtractor">
+                        <property name="names" value="name,sex,age"/>
+                    </bean>
+                </property>
+            </bean>
+        </property>
+    </bean>
+</beans>
