@@ -21,9 +21,12 @@
         3，将分解成的Fileset传递给fieldSetMapper，由其按照名字映射成Pojo对象；
         4，最终由FlatFileItemReader将映射成的Pojo对象返回，框架将返回的对象传递给Processor。
     -->
-    <bean id="csvItemReader" class="org.springframework.batch.item.file.FlatFileItemReader">
+    <bean id="csvItemReader" class="org.springframework.batch.item.file.FlatFileItemReader" scope="step">
         <!-- 指定数据来源的文件位置 -->
-        <property name="resource" value="classpath:input.csv"/>
+        <!-- 方式1：硬编码 -->
+        <!--<property name="resource" value="classpath:input.csv"/>-->
+        <!-- 方式2：通过job参数指定-->
+        <property name="resource" value="#{jobParameters['inputResource']}"/>
         <!-- 将文件映射成一个 pojo -->
         <property name="lineMapper">
             <bean class="org.springframework.batch.item.file.mapping.DefaultLineMapper">
@@ -63,9 +66,9 @@
         3，再由lineAggregator的属性fieldExtractor将数组转化成按照delimiter分割一个字符串；
         4，将这个字符串输出。
     -->
-    <bean id="csvItemWriter" class="org.springframework.batch.item.file.FlatFileItemWriter">
+    <bean id="csvItemWriter" class="org.springframework.batch.item.file.FlatFileItemWriter" scope="step">
         <!-- 指定输出目标文件的位置 -->
-        <property name="resource" value="file:out.csv"/>
+        <property name="resource" value="#{jobParameters['outResource']}"/>
         <property name="lineAggregator">
             <bean class="org.springframework.batch.item.file.transform.DelimitedLineAggregator">
                 <!-- 指定输出的字段以什么分隔 -->
