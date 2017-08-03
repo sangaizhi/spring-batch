@@ -1,0 +1,19 @@
+Spring Batch 概念预览
+    Job Repository: 作业仓库，负责 Job、Step 执行过程中的状态保存。
+    Job launcher: 作业调度器，提供执行 Job 的入口。
+    Job : 作业，由多个 Step 组成，封装整个批处理操作。
+    Job Instance: 作业实例。每个作业执行时，都会生成一个实例，是会被存放在 JobRepository中，如果作业失败，下次重新执行
+        该作业的时候，会使用同一个作业实例。
+    Job Parameters: 作业参数。它是一组原来启动批处理任务的参数，在启动Job的时候，可以设置任何需要的作业参数，需要注意
+        作业参数会用来标记作业实例，即不同的Job实例是通过 Job 参数来区分的。
+    Job Execution: 作业执行器，其负责具体Job的执行，每次运行Job都会启动一个新的Job执行器。
+    Step: 作业步，Job 的一个执行环节，由多个或者一个 Step 组装成 Job。
+    Step Execution: 作业步执行器。负责具体Job的执行，每次运行Step都会启动一个新的执行器。
+    Tasklet: Step 中具体执行逻辑的操作，可以重复执行，可以设置具体的同步、异步操作等。
+    Execution Context:执行上下文。它是一组框架持久化与控制的 key/value 对,能够让开发者在 Step Execution 或 Job Execution
+        范畴保存需要进行持久化的状态。
+    Chunk: 给定数量 Item 的集合，可以定义对 Chunk 的读操作、处理操作、写操作，提交间隔等，这是Spring Batch框架的一个重要特性。
+    Item: 一条数据记录。
+    ItemReader: 从数据源(文件系统、数据库、队列等)中读取 Item。
+    ItemProcessor: 在 Item 写入数据源之前，对数据进行处理（如数据过滤、数据校验）。
+    ItemWriter: 将 Item 批量写入数据源（文件系统、数据库、队列等）。
