@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:batch="http://www.springframework.org/schema/batch"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch.xsd">
+       xmlns:task="http://www.springframework.org/schema/task"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch.xsd http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd">
 
     <import resource="spring.xml"/>
     <batch:job id="testListenerJob">
@@ -15,7 +16,8 @@
             <!-- 方式2: 通过 @BeforeJob 和 @AfterJob 注解的方式-->
             <batch:listener ref="jobExecutionListener2"></batch:listener>
             <!-- 方式3:: 通过 xml 配置的方式-->
-            <batch:listener ref="jobExecutionListener3" before-job-method="before" after-job-method="after"></batch:listener>
+            <batch:listener ref="jobExecutionListener3" before-job-method="before"
+                            after-job-method="after"></batch:listener>
         </batch:listeners>
         <!--&lt;!&ndash;<batch:validator ref="validator1"/>&ndash;&gt;-->
         <!--&lt;!&ndash;<batch:validator ref="csvJobParameterValidator"/>&ndash;&gt;-->
@@ -48,7 +50,8 @@
     </batch:job>
 
     <!-- 组合JobParametersValidator -->
-    <bean id="compositeJobParametersValidator" class="org.springframework.batch.core.job.CompositeJobParametersValidator">
+    <bean id="compositeJobParametersValidator"
+          class="org.springframework.batch.core.job.CompositeJobParametersValidator">
         <property name="validators">
             <list>
                 <ref bean="validator1"/>
@@ -96,6 +99,14 @@
             <batch:listener ref="childListener"/>
         </batch:listeners>
     </batch:job>
+    
+    <task:executor id="executor" pool-size="5"/>
+    <bean id="asyncJob" class="org.springframework.batch.core.launch.support.SimpleJobLauncher">
+        <property name="jobRepository" ref="jobRepository"/>
+        <property name="taskExecutor" ref="executor" />
+    </bean>
+
+
 
 
 </beans>
