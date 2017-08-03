@@ -68,7 +68,34 @@
             </set>
         </property>
     </bean>
-    <bean id="validator2" class="org.sangaizhi.springbatch.job.JobParameterValidator"></bean>
+    <bean id="validator2" class="org.sangaizhi.springbatch.job.JobParameterValidator"/>
+
+    <!-- 定义父类Job -->
+    <batch:job id="baseJob">
+        <batch:step id="baseStep">
+            <batch:tasklet ref="hello" transaction-manager="txManager"/>
+        </batch:step>
+        <!-- 父类 Job 的 Listener 列表 -->
+        <batch:listeners>
+            <batch:listener ref="baseListener"/>
+        </batch:listeners>
+    </batch:job>
+
+
+    <!-- 定义子类 Job，继承父类的Job: baseJob -->
+    <batch:job id="childJob" parent="baseJob">
+        <batch:step id="childStep">
+            <batch:tasklet ref="hello" transaction-manager="txManager"/>
+        </batch:step>
+        <!--
+            子类 Job的拦截器配置
+            merge 属性为 true 表示 子类 Job的拦截器与父类 Job 的拦截器进行合并，即子类Job拥有父类Job的拦截器
+            merge 属性为 false 表示 子类 Job 的拦截器将会覆盖父类 Job 的拦截器
+        -->
+        <batch:listeners merge="true">
+            <batch:listener ref="childListener"/>
+        </batch:listeners>
+    </batch:job>
 
 
 </beans>
