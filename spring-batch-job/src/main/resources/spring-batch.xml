@@ -32,12 +32,14 @@
         </batch:step>
         <batch:validator ref="validator1"/>
     </batch:job>
+
     <batch:job id="testValidatorJob2">
         <batch:step id="testValidatorStep2">
             <batch:tasklet ref="hello" transaction-manager="txManager"></batch:tasklet>
         </batch:step>
         <batch:validator ref="validator2"/>
     </batch:job>
+
     <batch:job id="testValidatorJob3">
         <batch:step id="testValidatorStep3">
             <batch:tasklet ref="hello" transaction-manager="txManager"></batch:tasklet>
@@ -45,6 +47,7 @@
         <batch:validator ref="compositeJobParametersValidator"/>
     </batch:job>
 
+    <!-- 组合JobParametersValidator -->
     <bean id="compositeJobParametersValidator" class="org.springframework.batch.core.job.CompositeJobParametersValidator">
         <property name="validators">
             <list>
@@ -53,7 +56,6 @@
             </list>
         </property>
     </bean>
-
     <bean id="validator1" class="org.springframework.batch.core.job.DefaultJobParametersValidator">
         <property name="requiredKeys">
             <set>
@@ -66,9 +68,7 @@
             </set>
         </property>
     </bean>
-
-    <bean id="validator2" class="org.sangaizhi.springbatch.job.JobParameterValidator">
-    </bean>
+    <bean id="validator2" class="org.sangaizhi.springbatch.job.JobParameterValidator"></bean>
 
 
 </beans>

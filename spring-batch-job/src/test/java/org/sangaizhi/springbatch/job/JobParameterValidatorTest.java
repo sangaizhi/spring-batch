@@ -28,6 +28,9 @@ public class JobParameterValidatorTest {
         jobLauncher = (JobLauncher) context.getBean("jobLauncher");
     }
 
+    /**
+     * 默认参数校验测试
+     */
     @Test
     public void testJobParameterValidator1(){
         Job job = (Job) context.getBean("testValidatorJob");
@@ -39,6 +42,10 @@ public class JobParameterValidatorTest {
             e.printStackTrace();
         }
     }
+
+    /**
+     * 自定义参数校验测试
+     */
     @Test
     public void testJobParameterValidator2(){
         Job job = (Job) context.getBean("testValidatorJob2");
@@ -51,6 +58,9 @@ public class JobParameterValidatorTest {
         }
     }
 
+    /**
+     * 组合参数校验测试
+     */
     @Test
     public void testJobParameterValidator3(){
         Job job = (Job) context.getBean("testValidatorJob3");
@@ -62,6 +72,5 @@ public class JobParameterValidatorTest {
             e.printStackTrace();
         }
     }
-
 
 }
