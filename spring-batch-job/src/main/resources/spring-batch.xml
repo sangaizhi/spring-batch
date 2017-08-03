@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:batch="http://www.springframework.org/schema/batch"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch.xsd">
+
+    <import resource="spring.xml"/>
+    <batch:job id="testListenerJob">
+        <batch:step id="testListenerStep">
+            <batch:tasklet ref="hello" transaction-manager="txManager"></batch:tasklet>
+        </batch:step>
+        <batch:listeners>
+            <!-- 定义 Job 拦截器 -->
+            <!-- 方式1: 通过实现 JobExecutionListener 接口的方式-->
+            <batch:listener ref="jobExecutionListener1"></batch:listener>
+            <!-- 方式2: 通过 @BeforeJob 和 @AfterJob 注解的方式-->
+            <batch:listener ref="jobExecutionListener2"></batch:listener>
+            <!-- 方式3:: 通过 xml 配置的方式-->
+            <batch:listener ref="jobExecutionListener3" before-job-method="before" after-job-method="after"></batch:listener>
+        </batch:listeners>
+        <!--&lt;!&ndash;<batch:validator ref="validator1"/>&ndash;&gt;-->
+        <!--&lt;!&ndash;<batch:validator ref="csvJobParameterValidator"/>&ndash;&gt;-->
+        <!--<batch:validator ref="compositeJobParametersValidator"/>-->
+    </batch:job>
+
+    <bean id="hello" class="org.sangaizhi.springbatch.job.HelloTasklet">
+        <property name="message" value="Hello"></property>
+    </bean>
+
+    <batch:job id="testValidatorJob">
+        <batch:step id="testValidatorStep">
+            <batch:tasklet ref="hello" transaction-manager="txManager"></batch:tasklet>
+        </batch:step>
+        <batch:validator ref="validator1"/>
+    </batch:job>
+    <batch:job id="testValidatorJob2">
+        <batch:step id="testValidatorStep2">
+            <batch:tasklet ref="hello" transaction-manager="txManager"></batch:tasklet>
+        </batch:step>
+        <batch:validator ref="validator2"/>
+    </batch:job>
+    <batch:job id="testValidatorJob3">
+        <batch:step id="testValidatorStep3">
+            <batch:tasklet ref="hello" transaction-manager="txManager"></batch:tasklet>
+        </batch:step>
+        <batch:validator ref="compositeJobParametersValidator"/>
+    </batch:job>
+
+    <bean id="compositeJobParametersValidator" class="org.springframework.batch.core.job.CompositeJobParametersValidator">
+        <property name="validators">
+            <list>
+                <ref bean="validator1"/>
+                <ref bean="validator2"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="validator1" class="org.springframework.batch.core.job.DefaultJobParametersValidator">
+        <property name="requiredKeys">
+            <set>
+                <value>date</value>
+            </set>
+        </property>
+        <property name="optionalKeys">
+            <set>
+                <value>name</value>
+            </set>
+        </property>
+    </bean>
+
+    <bean id="validator2" class="org.sangaizhi.springbatch.job.JobParameterValidator">
+    </bean>
+
+
+</beans>
