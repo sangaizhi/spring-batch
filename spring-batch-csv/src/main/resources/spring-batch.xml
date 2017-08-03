@@ -13,7 +13,6 @@
         </batch:step>
     </batch:job>
 
-
     <!--
         定义CVS数据读取的类
         通过 Spring Batch 提供的 FlatFileItemReader 类，此类主要用于 Flat文件的读操作。
