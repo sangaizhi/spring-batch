@@ -13,6 +13,7 @@
         <module>spring-batch-csv</module>
         <module>spring-batch-xml</module>
         <module>spring-batch-job</module>
+        <module>spring-batch-schedule</module>
     </modules>
 
     <properties>
