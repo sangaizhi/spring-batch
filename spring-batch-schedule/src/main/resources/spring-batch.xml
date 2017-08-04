@@ -15,12 +15,12 @@
             定义执行对象、方法和调度周期
             每秒执行一次对象 schedulerLauncher 的 launch 方法
         -->
-        <task:scheduled ref="schedulerLauncher" method="launch" fixed-rate="1000"/>
+        <task:scheduled ref="schedulerLauncher" method="launch" cron="*/5 * * * * *"/>
     </task:scheduled-tasks>
 
     <!-- 定义定时任务执行的对象 -->
     <bean id="schedulerLauncher" class="org.sangaizhi.springbatch.schedule.SchedulerLauncher">
-        <property name="job" ref="scheduleJob"></property>
+        <property name="job" ref="scheduleJob"/>
         <property name="jobLauncher" ref="jobLauncher"/>
     </bean>
 
@@ -28,7 +28,7 @@
     <batch:job id="scheduleJob">
         <batch:step id="scheduleStep">
             <batch:tasklet transaction-manager="txManager">
-                <bean class="org.sangaizhi.springbatch.schedule.HelloTasklet" />
+                <bean class="org.sangaizhi.springbatch.schedule.HelloTasklet"/>
             </batch:tasklet>
         </batch:step>
     </batch:job>

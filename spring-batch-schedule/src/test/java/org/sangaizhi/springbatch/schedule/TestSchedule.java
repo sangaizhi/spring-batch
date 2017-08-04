@@ -1,8 +1,5 @@
 package org.sangaizhi.springbatch.schedule;
 
-import org.junit.Test;
-import org.springframework.batch.core.explore.JobExplorer;
-import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -12,10 +9,8 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class TestSchedule {
 
-    @Test
-    public void main(){
+    public static void main(String[] args){
         ApplicationContext context = new ClassPathXmlApplicationContext("classpath:spring-batch.xml");
-//        JobExplorer explorer = (JobExplorer) context.getBean("jobExplorer");
     }
 
 

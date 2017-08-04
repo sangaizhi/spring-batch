@@ -14,15 +14,6 @@ import java.util.Map;
  * @date 2017/8/3
  */
 public class HelloTasklet implements Tasklet {
-    private String message;
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
 
     public RepeatStatus execute(StepContribution stepContribution, ChunkContext chunkContext) throws Exception {
         String jobName = chunkContext.getStepContext().getJobName();
@@ -37,7 +28,7 @@ public class HelloTasklet implements Tasklet {
      * @return
      */
     private String jobParameterToString(JobParameters jobParameters){
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for(Map.Entry<String, JobParameter> param : jobParameters.getParameters().entrySet()) {
             sb.append(String.format(
                     "%s = %s (%s);",
