@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:batch="http://www.springframework.org/schema/batch"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+
+
+    <!-- 配置扫描 batch 相关的类 -->
+    <context:component-scan base-package="org.sangaizhi.batch.web.batch"/>
+
+    <!-- 定义 job 的注册器，其中包含了所有的 job 对象，可以根据名字获取对象的 job 对象 -->
+    <bean id="jobRegistry" class="org.springframework.batch.core.configuration.support.MapJobRegistry"/>
+
+    <!-- 声明 JobRegistryBeanPostProcessor，可以在 Job 定义加载后，自动注册到 jobRegistry中 -->
+    <bean class="org.springframework.batch.core.configuration.support.JobRegistryBeanPostProcessor">
+        <property name="jobRegistry" ref="jobRegistry"/>
+    </bean>
+
+    <!-- jobLauncher 负责 batch 的启动工作 -->
+    <bean id="jobLauncher" class="org.springframework.batch.core.launch.support.SimpleJobLauncher">
+        <property name="jobRepository" ref="jobRepository"/>
+    </bean>
+    <!-- jobRepository 负责 job 的整个运行过程中的 CRUD 操作-->
+    <bean id="jobRepository" class="org.springframework.batch.core.repository.support.MapJobRepositoryFactoryBean">
+    </bean>
+
+    <bean id="batchTxManager" class="org.springframework.batch.support.transaction.ResourcelessTransactionManager"></bean>
+    <!-- 定义 Job -->
+    <batch:job id="csvJob">
+        <batch:step id="csvStep">
+            <batch:tasklet transaction-manager="batchTxManager">
+                <batch:chunk reader="csvItemReader" writer="csvItemWriter" processor="csvItemProcessor" commit-interval="1"/>
+            </batch:tasklet>
+        </batch:step>
+    </batch:job>
+
+    <!-- 定义数据读取的类：从文件中读取数据。注意 scope='step'，因为此处采用了参数后绑定技术 -->
+    <bean id="csvItemReader" class="org.springframework.batch.item.file.FlatFileItemReader" scope="step">
+        <!-- 指定数据来源文件位置 -->
+        <property name="resource" value="#{jobParameters['inputResource']}"/>
+        <!-- 将文件中的数据映射成一个 pojo -->
+        <property name="lineMapper">
+            <bean class="org.springframework.batch.item.file.mapping.DefaultLineMapper">
+                <!-- 指定行数据，将文件中的每一行分解为一个字段集合；然后，该字段集合可以和 pojo 类中的属性对应 -->
+                <property name="lineTokenizer" ref="lineTokenizer"/>
+                <property name="fieldSetMapper">
+                    <!-- 将一个字段集合与 pojo类进行映射，然后进行数据封装  -->
+                    <bean class="org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper">
+                        <property name="prototypeBeanName" value="student"/>
+                    </bean>
+                </property>
+            </bean>
+        </property>
+     </bean>
+
+    <!-- 定义文件数据分解器，将文件的每一行数据分解成一组数据，并与对应的实体映射 -->
+    <bean id="lineTokenizer" class="org.springframework.batch.item.file.transform.DelimitedLineTokenizer">
+        <!-- 行内数据分割标识 -->
+        <property name="delimiter" value=","/>
+        <!-- 分解出来的每一个数据的名字，与需映射的实体对应 -->
+        <property name="names">
+            <list>
+                <value>id</value>
+                <value>name</value>
+                <value>sexStr</value>
+                <value>age</value>
+            </list>
+        </property>
+    </bean>
+
+    <!-- 定义数据输出器。注意 scope='step'，因为此处采用了参数后绑定技术 -->
+    <bean id="csvItemWriter" class="org.springframework.batch.item.file.FlatFileItemWriter"  scope="step">
+        <property name="resource" value="#{jobParameters['outResource']}"/>
+        <property name="lineAggregator">
+            <bean class="org.springframework.batch.item.file.transform.DelimitedLineAggregator">
+                <property name="delimiter" value=","/>
+                <property name="fieldExtractor">
+                    <bean class="org.springframework.batch.item.file.transform.BeanWrapperFieldExtractor">
+                        <property name="names" value="name,sex,age"/>
+                    </bean>
+                </property>
+            </bean>
+        </property>
+    </bean>
+
+</beans>

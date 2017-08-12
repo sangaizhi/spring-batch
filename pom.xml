@@ -11,9 +11,9 @@
     <modules>
         <module>spring-batch-hello</module>
         <module>spring-batch-csv</module>
-        <module>spring-batch-xml</module>
         <module>spring-batch-job</module>
         <module>spring-batch-schedule</module>
+        <module>spring-batch-web</module>
     </modules>
 
     <properties>
@@ -29,6 +29,8 @@
         <spring-batch.version>3.0.5.RELEASE</spring-batch.version>
         <xstream.version>1.2.2</xstream.version>
         <junit.version>4.12</junit.version>
+        <servley-api.version>2.5</servley-api.version>
+        <jstl.version>1.2</jstl.version>
     </properties>
 
     <dependencyManagement>
@@ -149,6 +151,16 @@
                 <version>${spring.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-web</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-webmvc</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.springframework.batch</groupId>
                 <artifactId>spring-batch-core</artifactId>
                 <version>${spring-batch.version}</version>
@@ -177,6 +189,17 @@
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
                 <version>${junit.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>servlet-api</artifactId>
+                <version>${servley-api.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>jstl</artifactId>
+                <version>${jstl.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
