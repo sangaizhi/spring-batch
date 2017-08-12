@@ -4,6 +4,5 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <import resource="classpath:spring-batch.xml"/>
-    <!-- txManager 负责事务管理工作 -->
     <bean id="student" class="org.sangaizhi.batch.web.model.Student"/>
 </beans>
